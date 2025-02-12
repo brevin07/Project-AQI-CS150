@@ -5,13 +5,13 @@ import plotly.express as px
 
 from dash import Dash, dcc, html, Input, Output
 
-df_2016 = pd.read_csv('C:\\Users\\brevi\\PycharmProjects\\CS150\\Project-A-Brevin07\\cities_2016\\all_cities_2016.csv')
-df_2017 = pd.read_csv('C:\\Users\\brevi\\PycharmProjects\\CS150\\Project-A-Brevin07\\cities_2017\\all_cities_2017.csv')
-df_2018 = pd.read_csv('C:\\Users\\brevi\\PycharmProjects\\CS150\\Project-A-Brevin07\\cities_2018\\all_cities_2018.csv')
-df_2019 = pd.read_csv('C:\\Users\\brevi\\PycharmProjects\\CS150\\Project-A-Brevin07\\cities_2019\\all_cities_2019.csv')
-df_2020 = pd.read_csv('C:\\Users\\brevi\\PycharmProjects\\CS150\\Project-A-Brevin07\\cities_2020\\all_cities_2020.csv')
-df_2021 = pd.read_csv('C:\\Users\\brevi\\PycharmProjects\\CS150\\Project-A-Brevin07\\cities_2021\\all_cities_2021.csv')
-df_2022 = pd.read_csv('C:\\Users\\brevi\\PycharmProjects\\CS150\\Project-A-Brevin07\\cities_2022\\all_cities_2022.csv')
+df_2016 = pd.read_csv('all_cities_2016.csv')
+df_2017 = pd.read_csv('all_cities_2017.csv')
+df_2018 = pd.read_csv('all_cities_2018.csv')
+df_2019 = pd.read_csv('all_cities_2019.csv')
+df_2020 = pd.read_csv('all_cities_2020.csv')
+df_2021 = pd.read_csv('all_cities_2021.csv')
+df_2022 = pd.read_csv('all_cities_2022.csv')
 
 
 
@@ -22,6 +22,7 @@ df_2022 = pd.read_csv('C:\\Users\\brevi\\PycharmProjects\\CS150\\Project-A-Brevi
 #           ["Date", "Local Site Name", "Daily AQI Value", "AQS Parameter Description"]
 #       ]
 #       .head()[:10].to_string())
+
 df_2016["Date"] = pd.to_datetime(df_2016["Date"])
 df_2017["Date"] = pd.to_datetime(df_2017["Date"])
 df_2018["Date"] = pd.to_datetime(df_2018["Date"])
@@ -42,9 +43,7 @@ df_dict = {
     '2021': df_2021,
     '2022': df_2022
 }
-print(df_2016["Local Site Name"])
 
-df_2016 = df_2016.groupby(["Local Site Name", "Date"])["Daily AQI Value"].mean().astype(int).reset_index()
 app.layout = html.Div(
     [
         html.Div(
