@@ -1,0 +1,133 @@
+from types import NoneType
+
+import pandas as pd
+import plotly.express as px
+
+from dash import Dash, dcc, html, Input, Output
+
+df_2016 = pd.read_csv('C:\\Users\\brevi\\PycharmProjects\\CS150\\Project-A-Brevin07\\cities_2016\\all_cities_2016.csv')
+df_2017 = pd.read_csv('C:\\Users\\brevi\\PycharmProjects\\CS150\\Project-A-Brevin07\\cities_2017\\all_cities_2017.csv')
+df_2018 = pd.read_csv('C:\\Users\\brevi\\PycharmProjects\\CS150\\Project-A-Brevin07\\cities_2018\\all_cities_2018.csv')
+df_2019 = pd.read_csv('C:\\Users\\brevi\\PycharmProjects\\CS150\\Project-A-Brevin07\\cities_2019\\all_cities_2019.csv')
+df_2020 = pd.read_csv('C:\\Users\\brevi\\PycharmProjects\\CS150\\Project-A-Brevin07\\cities_2020\\all_cities_2020.csv')
+df_2021 = pd.read_csv('C:\\Users\\brevi\\PycharmProjects\\CS150\\Project-A-Brevin07\\cities_2021\\all_cities_2021.csv')
+df_2022 = pd.read_csv('C:\\Users\\brevi\\PycharmProjects\\CS150\\Project-A-Brevin07\\cities_2022\\all_cities_2022.csv')
+
+
+
+#print(f"Air pollution data frame: {df2017}")
+#print(df2017.groupby('Date').head()[:5].to_string())
+
+# print(df2017.groupby([df2017["Date"], "Local Site Name"])[
+#           ["Date", "Local Site Name", "Daily AQI Value", "AQS Parameter Description"]
+#       ]
+#       .head()[:10].to_string())
+df_2016["Date"] = pd.to_datetime(df_2016["Date"])
+df_2017["Date"] = pd.to_datetime(df_2017["Date"])
+df_2018["Date"] = pd.to_datetime(df_2018["Date"])
+df_2019["Date"] = pd.to_datetime(df_2019["Date"])
+df_2020["Date"] = pd.to_datetime(df_2020["Date"])
+df_2021["Date"] = pd.to_datetime(df_2021["Date"])
+df_2022["Date"] = pd.to_datetime(df_2022["Date"])
+
+stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
+app = Dash(__name__, external_stylesheets=stylesheets)
+
+df_dict = {
+    '2016': df_2016,
+    '2017': df_2017,
+    '2018': df_2018,
+    '2019': df_2019,
+    '2020': df_2020,
+    '2021': df_2021,
+    '2022': df_2022
+}
+print(df_2016["Local Site Name"])
+
+df_2016 = df_2016.groupby(["Local Site Name", "Date"])["Daily AQI Value"].mean().astype(int).reset_index()
+app.layout = html.Div(
+    [
+        html.Div(
+            html.H2(
+                "Air Pollution Analysis of Northern California Cities by Year", style={"textAlign": "center"}
+            ),
+            className="row"
+        ),
+        html.Div(dcc.Graph(id="air-graph", figure={}), className="row"),
+
+        html.Div([
+            html.Div(
+                dcc.Dropdown(
+                    id="year-dropdown",
+                    multi=False,
+                    options=[
+                        {"label": year, "value": year} for year in df_dict.keys()
+                    ],
+                    value='2016'
+
+                ),
+                className="three columns"
+            ),
+            html.Div(
+                dcc.Dropdown(
+                    id="air-dropdown",
+                    multi=True,
+                    options=[
+                        {"label": x, "value": x} for x in sorted(df_2018["Local Site Name"].unique())
+                    ],
+                    value=[]
+                ),
+                className="three columns"
+            ),
+            html.Div(
+                html.A(
+                    id="data_link",
+                    children="Data set used for analysis",
+                    href= "https://www.epa.gov/outdoor-air-quality-data/download-daily-data"
+
+                ),
+                className="two columns"
+            )
+        ],
+            className="row"
+
+        )
+
+    ]
+)
+
+# Callbacks *******************************************************************
+@app.callback(
+    Output(component_id="air-graph", component_property="figure"),
+    [Input(component_id="year-dropdown", component_property="value"),
+     Input(component_id="air-dropdown", component_property="value")]
+)
+def update_graph(year, cities_data):
+    print(f"Year chosen by user: {year}")
+    print(f"Cities chosen by user: {cities_data}")
+    df_filtered = df_dict.get(year)
+
+    if df_filtered is None:
+        return {}
+
+    if cities_data:
+        df_filtered = df_filtered[df_filtered["Local Site Name"].isin(cities_data)]
+
+    fig = px.line(
+        data_frame=df_filtered,
+        x="Date",
+        y="Daily AQI Value",
+        color="Local Site Name",
+        log_y=True,
+        labels={
+            "Daily AQI Value": "Daily AQI Value",
+            "Date": "Date",
+            "Local Site Name": "Local Site Name"
+        }
+    )
+    return fig
+
+
+
+if __name__ == "__main__":
+    app.run_server(debug=True)
