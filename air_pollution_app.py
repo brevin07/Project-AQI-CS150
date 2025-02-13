@@ -55,17 +55,8 @@ app.layout = html.Div(
         html.Div(dcc.Graph(id="air-graph", figure={}), className="row"),
 
         html.Div([
-            html.Div(
-                dcc.Dropdown(
-                    id="year-dropdown",
-                    multi=False,
-                    options=[
-                        {"label": year, "value": year} for year in df_dict.keys()
-                    ],
-                    value='2016'
-
-                ),
-                className="three columns"
+            dcc.Slider(2016, 2022, 1, value = 2016, id="year-slider"),
+            html.Div(id="slider-output-container"
             ),
             html.Div(
                 dcc.Dropdown(
@@ -98,7 +89,7 @@ app.layout = html.Div(
 # Callbacks *******************************************************************
 @app.callback(
     Output(component_id="air-graph", component_property="figure"),
-    [Input(component_id="year-dropdown", component_property="value"),
+    [Input(component_id="year-slider", component_property="value"),
      Input(component_id="air-dropdown", component_property="value")]
 )
 def update_graph(year, cities_data):
@@ -124,6 +115,10 @@ def update_graph(year, cities_data):
             "Local Site Name": "Local Site Name"
         }
     )
+
+
+    # if year == 2018:
+    #     fig.add_annotation(x="")
     return fig
 
 
