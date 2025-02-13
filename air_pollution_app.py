@@ -1,9 +1,11 @@
-from types import NoneType
-
 import pandas as pd
 import plotly.express as px
 
 from dash import Dash, dcc, html, Input, Output
+
+__author__ = "Brevin Tating"
+__credits__ = ["Brevin Tating"]
+__email__ = "btating@westmont.edu"
 
 df_2016 = pd.read_csv('all_cities_2016.csv')
 df_2017 = pd.read_csv('all_cities_2017.csv')
@@ -13,15 +15,6 @@ df_2020 = pd.read_csv('all_cities_2020.csv')
 df_2021 = pd.read_csv('all_cities_2021.csv')
 df_2022 = pd.read_csv('all_cities_2022.csv')
 
-
-
-#print(f"Air pollution data frame: {df2017}")
-#print(df2017.groupby('Date').head()[:5].to_string())
-
-# print(df2017.groupby([df2017["Date"], "Local Site Name"])[
-#           ["Date", "Local Site Name", "Daily AQI Value", "AQS Parameter Description"]
-#       ]
-#       .head()[:10].to_string())
 
 df_2016["Date"] = pd.to_datetime(df_2016["Date"])
 df_2017["Date"] = pd.to_datetime(df_2017["Date"])
@@ -117,8 +110,6 @@ def update_graph(year, cities_data):
     )
 
 
-    # if year == 2018:
-    #     fig.add_annotation(x="")
     return fig
 
 
